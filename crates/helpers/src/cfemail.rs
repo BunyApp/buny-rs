@@ -1,12 +1,12 @@
 //! Handles Cloudflare email protection.
-use aidoku_imports::html::Node;
 use alloc::string::String;
+use buny_imports::html::Node;
 
 /// Parses `data-cfemail` attribute and returns the email address.
 ///
 /// # Examples
 /// ```
-/// use aidoku_helpers::cfemail::parse_cfemail;
+/// use buny_helpers::cfemail::parse_cfemail;
 /// assert_eq!(
 ///     parse_cfemail("98d1fcf7f4f5d8ebecfdea"),
 ///     "Idolm@ster",

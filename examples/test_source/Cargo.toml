@@ -8,4 +8,4 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-aidoku = { path = "../../crates/lib" }
+buny = { path = "../../crates/lib" }

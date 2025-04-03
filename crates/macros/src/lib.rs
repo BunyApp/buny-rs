@@ -3,17 +3,17 @@
 #[macro_export]
 macro_rules! format {
     ($($arg:tt)*) => {{
-        aidoku::std::format(core::format_args!($($arg)*))
+        buny::std::format(core::format_args!($($arg)*))
     }};
 }
 
 #[macro_export]
 macro_rules! println {
     () => {{
-        aidoku::std::print("");
+        buny::std::print("");
     }};
     ($($arg:tt)*) => {{
-        let string = aidoku::std::format(core::format_args!($($arg)*));
-        aidoku::std::print(&(string));
+        let string = buny::std::format(core::format_args!($($arg)*));
+        buny::std::print(&(string));
     }};
 }

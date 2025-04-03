@@ -1,9 +1,9 @@
-use aidoku_imports::html::Node;
 use alloc::string::String;
+use buny_imports::html::Node;
 
 pub trait NodeHelpers {
     /// Get the text of the element and its children. It's different from
-    /// [aidoku_imports::html::Node::text] in that `<p>` and `<br>` are considered
+    /// [buny_imports::html::Node::text] in that `<p>` and `<br>` are considered
     /// and will insert linebreaks.
     fn text_with_newlines(&self) -> String;
 }

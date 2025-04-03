@@ -1,16 +1,16 @@
 [package]
-name = "aidoku"
-version = "0.2.0"
+name = "buny"
+version = "0.1.0"
 edition = "2021"
 publish = true
 
 [dependencies]
-aidoku_imports = { path = "../imports" }
-aidoku_macros = { path = "../macros" }
-aidoku_proc_macros = { path = "../proc_macros" }
+buny_imports = { path = "../imports" }
+buny_macros = { path = "../macros" }
+buny_proc_macros = { path = "../proc_macros" }
 dlmalloc = { version = "0.2.4", optional = true, features = ["global"] }
-aidoku_helpers = { path = "../helpers", optional = true }
+buny_helpers = { path = "../helpers", optional = true }
 
 [features]
 default = ["dlmalloc"]
-helpers = ["aidoku_helpers"]
+helpers = ["buny_helpers"]

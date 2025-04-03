@@ -1,14 +1,14 @@
 use core::str::Utf8Error;
 
-pub type Result<T> = core::result::Result<T, AidokuError>;
+pub type Result<T> = core::result::Result<T, BunyError>;
 
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
-pub struct AidokuError {
-    pub reason: AidokuErrorKind,
+pub struct BunyError {
+    pub reason: BunyErrorKind,
 }
 
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
-pub enum AidokuErrorKind {
+pub enum BunyErrorKind {
     /// Error when typecasting a ValueRef to their types.
     ValueCast(ValueCastError),
 
@@ -48,26 +48,26 @@ pub enum ValueCastError {
     NotNode,
 }
 
-impl From<ValueCastError> for AidokuError {
+impl From<ValueCastError> for BunyError {
     fn from(why: ValueCastError) -> Self {
         Self {
-            reason: AidokuErrorKind::ValueCast(why),
+            reason: BunyErrorKind::ValueCast(why),
         }
     }
 }
 
-impl From<Utf8Error> for AidokuError {
+impl From<Utf8Error> for BunyError {
     fn from(why: Utf8Error) -> Self {
         Self {
-            reason: AidokuErrorKind::Utf8Error(why),
+            reason: BunyErrorKind::Utf8Error(why),
         }
     }
 }
 
-impl From<NodeError> for AidokuError {
+impl From<NodeError> for BunyError {
     fn from(why: NodeError) -> Self {
         Self {
-            reason: AidokuErrorKind::NodeError(why),
+            reason: BunyErrorKind::NodeError(why),
         }
     }
 }

@@ -81,28 +81,28 @@ mod structs;
 pub use structs::*;
 
 /// Error module for Aidoku operations.
-pub use aidoku_imports::error;
+pub use buny_imports::error;
 
 /// The Aidoku standard module, which includes all functions exported from
 /// Aidoku as well as a few common types.
 pub mod std {
     extern crate alloc;
-    pub use aidoku_imports::*;
     pub use alloc::string::String;
     pub use alloc::vec::Vec;
+    pub use buny_imports::*;
 
     pub use alloc::fmt::format;
 }
 
-/// The Aidoku prelude, which includes [format!](aidoku_macros::format),
-/// [println!](aidoku_macros::println), as well as procedural macros which
+/// The Aidoku prelude, which includes [format!](buny_macros::format),
+/// [println!](buny_macros::println), as well as procedural macros which
 /// are required for interop with the app.
 pub mod prelude {
-    pub use aidoku_macros::*;
-    pub use aidoku_proc_macros::*;
+    pub use buny_macros::*;
+    pub use buny_proc_macros::*;
 }
 
 #[cfg(feature = "helpers")]
 pub mod helpers {
-    pub use aidoku_helpers::*;
+    pub use buny_helpers::*;
 }

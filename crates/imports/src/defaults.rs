@@ -1,6 +1,6 @@
 //! Interface for interacting with user preferences.
 use crate::{
-    error::{AidokuError, AidokuErrorKind, Result},
+    error::{BunyError, BunyErrorKind, Result},
     std::{Rid, ValueRef},
 };
 
@@ -17,8 +17,8 @@ pub fn defaults_get<T: AsRef<str>>(key: T) -> Result<ValueRef> {
     let key = key.as_ref();
     let rid = unsafe { _defaults_get(key.as_ptr(), key.len()) };
     match rid {
-        -1 => Err(AidokuError {
-            reason: AidokuErrorKind::DefaultNotFound,
+        -1 => Err(BunyError {
+            reason: BunyErrorKind::DefaultNotFound,
         }),
         _ => Ok(ValueRef::new(rid)),
     }

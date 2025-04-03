@@ -9,7 +9,7 @@ use alloc::vec::Vec;
 
 use super::html::Node;
 
-use super::error::{AidokuError, Result, ValueCastError};
+use super::error::{BunyError, Result, ValueCastError};
 
 /// An enumeration of different ValueRef types.
 #[repr(C)]
@@ -136,7 +136,7 @@ impl ValueRef {
         if self.kind() == Kind::String {
             Ok(StringRef(self))
         } else {
-            Err(AidokuError::from(ValueCastError::NotString))
+            Err(BunyError::from(ValueCastError::NotString))
         }
     }
 
@@ -145,7 +145,7 @@ impl ValueRef {
         if self.kind() == Kind::Object {
             Ok(ObjectRef(self))
         } else {
-            Err(AidokuError::from(ValueCastError::NotObject))
+            Err(BunyError::from(ValueCastError::NotObject))
         }
     }
 
@@ -154,7 +154,7 @@ impl ValueRef {
         if self.kind() == Kind::Array {
             Ok(ArrayRef::from(self))
         } else {
-            Err(AidokuError::from(ValueCastError::NotArray))
+            Err(BunyError::from(ValueCastError::NotArray))
         }
     }
 
@@ -165,7 +165,7 @@ impl ValueRef {
             let val = unsafe { read_int(self.0) };
             Ok(val)
         } else {
-            Err(AidokuError::from(ValueCastError::NotInt))
+            Err(BunyError::from(ValueCastError::NotInt))
         }
     }
 
@@ -176,7 +176,7 @@ impl ValueRef {
             let val = unsafe { read_float(self.0) };
             Ok(val)
         } else {
-            Err(AidokuError::from(ValueCastError::NotFloat))
+            Err(BunyError::from(ValueCastError::NotFloat))
         }
     }
 
@@ -187,7 +187,7 @@ impl ValueRef {
             let val = unsafe { read_bool(self.0) };
             Ok(val)
         } else {
-            Err(AidokuError::from(ValueCastError::NotBool))
+            Err(BunyError::from(ValueCastError::NotBool))
         }
     }
 
@@ -228,7 +228,7 @@ impl ValueRef {
             };
             Ok(val)
         } else {
-            Err(AidokuError::from(ValueCastError::NotString))
+            Err(BunyError::from(ValueCastError::NotString))
         }
     }
 
@@ -237,7 +237,7 @@ impl ValueRef {
         if self.kind() == Kind::Node {
             Ok(unsafe { Node::from(self.0) })
         } else {
-            Err(AidokuError::from(ValueCastError::NotNode))
+            Err(BunyError::from(ValueCastError::NotNode))
         }
     }
 }

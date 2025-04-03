@@ -1,6 +1,6 @@
 //! Converts JSON to a [ValueRef].
 use crate::{
-    error::{AidokuError, AidokuErrorKind, Result},
+    error::{BunyError, BunyErrorKind, Result},
     std::{Rid, ValueRef},
 };
 
@@ -25,8 +25,8 @@ pub fn parse<T: AsRef<[u8]>>(buf: T) -> Result<ValueRef> {
     let buf = buf.as_ref();
     let rid = unsafe { json_parse(buf.as_ptr(), buf.len()) };
     match rid {
-        -1 => Err(AidokuError {
-            reason: AidokuErrorKind::JsonParseError,
+        -1 => Err(BunyError {
+            reason: BunyErrorKind::JsonParseError,
         }),
         _ => Ok(ValueRef::new(rid)),
     }

@@ -3,7 +3,7 @@ type Rid = i32;
 
 use crate::{
     alloc::{string::String, vec::Vec},
-    error::{AidokuError, AidokuErrorKind, NodeError, Result},
+    error::{BunyError, BunyErrorKind, NodeError, Result},
     html::Node,
     std::{Rid as ValueRid, StringRef, ValueRef},
     Kind,
@@ -182,7 +182,7 @@ impl Request {
         let res = String::from_utf8(self.data());
         match res {
             Ok(res) => Ok(res),
-            Err(err) => Err(AidokuError::from(err.utf8_error())),
+            Err(err) => Err(BunyError::from(err.utf8_error())),
         }
     }
 
@@ -192,8 +192,8 @@ impl Request {
         let rid = unsafe { request_json(self.0) };
         self.close();
         match rid {
-            -1 => Err(AidokuError {
-                reason: AidokuErrorKind::JsonParseError,
+            -1 => Err(BunyError {
+                reason: BunyErrorKind::JsonParseError,
             }),
             _ => Ok(ValueRef::new(rid)),
         }
@@ -205,7 +205,7 @@ impl Request {
         let rid = unsafe { request_html(self.0) };
         self.close();
         match rid {
-            -1 => Err(AidokuError::from(NodeError::ParseError)),
+            -1 => Err(BunyError::from(NodeError::ParseError)),
             _ => Ok(unsafe { Node::from(rid) }),
         }
     }

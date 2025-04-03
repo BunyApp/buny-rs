@@ -5,7 +5,7 @@
 //!
 //! # Examples
 //! ```
-//! use aidoku_helpers::substring::Substring;
+//! use buny_helpers::substring::Substring;
 //! assert_eq!(
 //!     r#"background-image: url("paper.gif");"#.substring_after(r#"(""#),
 //!     Some(r#"paper.gif");"#),

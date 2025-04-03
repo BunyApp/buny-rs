@@ -1,7 +1,7 @@
 # Utilities
-Utilities to make coding Aidoku sources less miserable. It is available by enabling the `helpers` feature in the main crate
+Utilities to make coding buny sources less miserable. It is available by enabling the `helpers` feature in the main crate
 ```toml
-aidoku = { git = "https://github.com/Aidoku/aidoku-rs", features = ["helpers"] }
+buny = { git = "https://github.com/Aidoku/buny-rs", features = ["helpers"] }
 ```
-After enabling the `helpers` feature, this crate is re-exported under the `aidoku::helpers` namespace.
+After enabling the `helpers` feature, this crate is re-exported under the `buny::helpers` namespace.
 

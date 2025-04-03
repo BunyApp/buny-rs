@@ -1,8 +1,8 @@
 use crate::std::{ObjectRef, Rid, String, ValueRef, Vec};
 
-#[link(wasm_import_module = "aidoku")]
-extern "C" {
-    fn create_manga(
+#[link(wasm_import_module = "buny")]
+unsafe extern "C" {
+    fn create_novel(
         id: *const u8,
         id_len: usize,
         cover_url: *const u8,
@@ -20,12 +20,24 @@ extern "C" {
         categories: *const *const u8,
         category_str_lens: *const usize,
         category_count: usize,
-        status: MangaStatus,
-        nsfw: MangaContentRating,
-        viewer: MangaViewer,
+        status: NovelStatus,
+        nsfw: NovelContentRating,
+        viewer: NovelViewer,
     ) -> i32;
 
-    fn create_manga_result(manga_array: Rid, has_more: bool) -> i32;
+    unsafe fn create_novel_result(novel_array: Rid, has_more: bool) -> i32;
+
+    unsafe fn create_novel_reviews(
+        username: *const u8,
+        username_len: usize,
+        cover: *const u8,
+        cover_len: usize,
+        content: *const u8,
+        content_len: usize,
+        rating: f32,
+        date_str: *const u8,
+        date_str_len: usize,
+    ) -> i32;
 
     fn create_chapter(
         id: *const u8,
@@ -43,17 +55,9 @@ extern "C" {
         lang_len: usize,
     ) -> i32;
 
-    fn create_page(
-        index: i32,
-        image_url: *const u8,
-        image_url_len: usize,
-        base64: *const u8,
-        base64_len: usize,
-        text: *const u8,
-        text_len: usize,
-    ) -> i32;
+    fn create_chapter_result(chapter_array: Rid, has_more: bool) -> i32;
 
-    fn create_deeplink(manga: i32, chapter: i32) -> i32;
+    fn create_chapter_content(index: i32, paragraph: *const u8, paragraph_len: usize) -> i32;
 }
 
 #[repr(C)]
@@ -113,49 +117,49 @@ impl FilterType {
     }
 }
 
-/// An enum representing the various statuses a manga can have.
+/// An enum representing the various statuses a novel can have.
 #[repr(C)]
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Default)]
-pub enum MangaStatus {
-    /// The manga status cannot be determined.
+pub enum NovelStatus {
+    /// The novel status cannot be determined.
     #[default]
     Unknown = 0,
 
-    /// A manga that is still releasing chapters/being translated.
+    /// A novel that is still releasing chapters/being translated.
     Ongoing = 1,
 
-    /// A manga that has completed production/translation.
+    /// A novel that has completed production/translation.
     Completed = 2,
 
-    /// A manga that has been cancelled. This could convey the manga
-    /// being dropped, or the translation team has stopped working on the manga,
-    /// even though the manga itself is still ongoing.
+    /// A novel that has been cancelled. This could convey the novel
+    /// being dropped, or the translation team has stopped working on the novel,
+    /// even though the novel itself is still ongoing.
     Cancelled = 3,
 
-    /// The manga is on hiatus. Could happen because the author decided
+    /// The novel is on hiatus. Could happen because the author decided
     /// to get a PS5 and then leave people on a cliffhanger for two years
     /// straight.
     Hiatus = 4,
 }
 
-/// An enumeration representing the manga's content rating.
+/// An enumeration representing the novel's content rating.
 #[repr(C)]
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Default)]
-pub enum MangaContentRating {
+pub enum NovelContentRating {
     #[default]
     Safe = 0,
     Suggestive = 1,
     Nsfw = 2,
 }
 
-/// An enumeration representing different manga viewers, used to indicate
-/// the preferred reading method for this manga.
+/// An enumeration representing different novel viewers, used to indicate
+/// the preferred reading method for this novel.
 #[repr(C)]
 #[derive(PartialEq, Eq, Clone, Copy, Debug, Default)]
-pub enum MangaViewer {
+pub enum NovelViewer {
     #[deprecated(
         since = "0.2.0",
-        note = "MangaViewer::Default is ignored in the app, and defaults to the RTL viewer."
+        note = "novelViewer::Default is ignored in the app, and defaults to the RTL viewer."
     )]
     Default = 0,
     #[default]
@@ -181,69 +185,96 @@ pub struct Filter {
     pub object: ObjectRef,
 }
 
-/// The Manga struct contains information about a manga. Different mangas
+/// The novel struct contains information about a novel. Different novels
 /// are differentiated by their ID, and so changing the ID will result in
-/// a different manga. Thus, developers should decide on the ID format
+/// a different novel. Thus, developers should decide on the ID format
 /// before publishing their source.
 ///
 /// The ID must be unique at the source-level.
 #[derive(Clone, Debug, Default)]
-pub struct Manga {
-    /// The given identifier of this manga, which can be anything, from a number
+pub struct Novel {
+    /// The given identifier of this novel, which can be anything, from a number
     /// to the entire URL.
     pub id: String,
 
-    /// A URL pointing to a thumbnail which can be used to display the manga.
+    /// A URL pointing to a thumbnail which can be used to display the novel.
     pub cover: String,
 
-    /// The title of the manga. It can be either the official title, or the localized
+    /// The title of the novel. It can be either the official title, or the localized
     /// title, depending on which one the developer thinks fits best for the source.
     pub title: String,
 
-    /// The name of the manga's author. Multiple authors should be concatenated into
+    /// The name of the novel's author. Multiple authors should be concatenated into
     /// a single string using a delimiter such as a comma.
     pub author: String,
 
-    /// The name of the manga's artist. Multiple artists should be concatenated into
+    /// The name of the novel's artist. Multiple artists should be concatenated into
     /// a single string using a delimiter such as a comma.
     pub artist: String,
 
-    /// A description for this manga.
+    /// A description for this novel.
     pub description: String,
 
-    /// The URL for this manga. Will be used for sharing and for opening the in-app
+    /// The URL for this novel. Will be used for sharing and for opening the in-app
     /// browser.
     pub url: String,
 
-    /// A vector containing all the manga's tags/categories.
+    /// A vector containing all the novel's tags/categories.
     pub categories: Vec<String>,
 
-    /// The status of the manga (completed, ongoing, hiatus, cancelled...).
-    pub status: MangaStatus,
+    /// The status of the novel (completed, ongoing, hiatus, cancelled...).
+    pub status: NovelStatus,
 
-    /// The manga's content rating (safe, suggestive or NSFW).
-    pub nsfw: MangaContentRating,
+    /// The novel's content rating (safe, suggestive or NSFW).
+    pub nsfw: NovelContentRating,
 
-    /// The viewer to use for this manga.
-    pub viewer: MangaViewer,
+    /// The viewer to use for this novel.
+    pub viewer: NovelViewer,
 }
 
-impl PartialEq for Manga {
+impl PartialEq for Novel {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
     }
 }
 
-/// A struct representing a "page" of mangas. There is no limit on how many mangas
+/// A struct representing a "page" of novles. There is no limit on how many novles
 /// can a page have, that is up to the source to decide.
 #[derive(Clone, Debug, Default)]
-pub struct MangaPageResult {
-    /// The mangas that were found in the page.
-    pub manga: Vec<Manga>,
+pub struct NovelPageResult {
+    /// The novels that were found in the page.
+    pub novel: Vec<Novel>,
 
     /// Whether there are any more pages after this one. Used to determine if
     /// the app should make another request when the user scrolls to the bottom.
     pub has_more: bool,
+}
+
+#[derive(Clone, Debug)]
+pub struct Review {
+    /// User's username.
+    pub username: String,
+    /// User's profile picture url.
+    pub cover: String,
+    /// The actual review for the novel.
+    pub content: String,
+    /// Rating from 0.0 - 1.0
+    pub rating: f32,
+    /// date as a string (e.g. 1/1/11, 3 days ago, 1 hour ago).
+    /// The source dev has the freedom to choose the display type or leave it empty.
+    pub date_string: String,
+}
+
+impl Default for Review {
+    fn default() -> Self {
+        Review {
+            username: String::new(),
+            cover: String::new(),
+            content: String::new(),
+            rating: 1.0,
+            date_string: String::new(),
+        }
+    }
 }
 
 /// Struct containing information about a listing.
@@ -263,10 +294,10 @@ impl PartialEq for Listing {
 /// by their ID. Thus, changing the ID will result in a different chapter, even if the
 /// chapters have the same volume/chapter number.
 ///
-/// The ID must be unique at the manga level.
+/// The ID must be unique at the novel level.
 #[derive(Clone, Debug)]
 pub struct Chapter {
-    /// The given identifier of this manga, which can be anything, from a number
+    /// The given identifier of this novel, which can be anything, from a number
     /// to the entire URL.
     pub id: String,
 
@@ -313,36 +344,28 @@ impl Default for Chapter {
     }
 }
 
-/// Struct representing a manga page.
+/// Struct represents a "page" of chapters, unlike manga, novels have thousands
+/// of chapters across multiple page urls and it is unfesable to load tens of
+/// pages in the background while the user waits, thus chapters are loaded on request.
 #[derive(Clone, Debug, Default)]
-pub struct Page {
+pub struct ChapterPageResult {
+    /// Chapters in a page.
+    pub chapters: Vec<Chapter>,
+    /// does the novel have any more pages of chapters.
+    pub has_more: bool,
+}
+
+/// A chapter is going to be sectioned off into paragraphs
+#[derive(Clone, Debug, Default)]
+pub struct ChapterParagraph {
     /// The index of the page, starting from 0.
     pub index: i32,
-
-    /// The URL to the image file representing the page.
-    pub url: String,
-
-    /// The base64-encoded data of the page. If you got it from a data URI,
-    /// remove everything but the actual base64 data.
-    pub base64: String,
-
-    /// The page's text, mostly used for light novels. Aidoku does not support
-    /// this feature yet.
-    pub text: String,
+    /// A section or a paragraph of text on the page, where the page contains
+    /// multiple paragraphs.
+    pub paragraph: String,
 }
 
-/// Struct representing a deep link. This deep link is used to open a manga
-/// from a webpage URL using the `aidoku://` URL scheme.
-#[derive(PartialEq, Clone, Debug, Default)]
-pub struct DeepLink {
-    /// The manga to link to.
-    pub manga: Option<Manga>,
-
-    /// The chapter to link to. You only need to provide the chapter's ID.
-    pub chapter: Option<Chapter>,
-}
-
-impl Manga {
+impl Novel {
     pub fn create(self) -> i32 {
         let categories_ptr = &self
             .categories
@@ -355,7 +378,7 @@ impl Manga {
             .map(|x| x.len())
             .collect::<Vec<usize>>();
         unsafe {
-            create_manga(
+            create_novel(
                 self.id.as_ptr(),
                 self.id.len(),
                 self.cover.as_ptr(),
@@ -381,14 +404,43 @@ impl Manga {
     }
 }
 
-impl MangaPageResult {
+impl NovelPageResult {
     pub fn create(self) -> i32 {
-        let mut arr = aidoku_imports::ArrayRef::new();
-        for manga in self.manga {
-            let manga_descriptor = manga.create();
-            arr.insert(ValueRef::new(manga_descriptor));
+        let mut arr = buny_imports::ArrayRef::new();
+        for novel in self.novel {
+            let novel_descriptor = novel.create();
+            arr.insert(ValueRef::new(novel_descriptor));
         }
-        unsafe { create_manga_result(arr.0 .0, self.has_more) }
+        unsafe { create_novel_result(arr.0 .0, self.has_more) }
+    }
+}
+
+impl Review {
+    pub fn create(self) -> i32 {
+        unsafe {
+            create_novel_reviews(
+                self.username.as_ptr(),
+                self.username.len(),
+                self.cover.as_ptr(),
+                self.cover.len(),
+                self.content.as_ptr(),
+                self.content.len(),
+                self.rating,
+                self.date_string.as_ptr(),
+                self.date_string.len(),
+            )
+        }
+    }
+}
+
+impl ChapterPageResult {
+    pub fn create(self) -> i32 {
+        let mut arr = buny_imports::ArrayRef::new();
+        for chapter in self.chapters {
+            let chapter_descriptor = chapter.create();
+            arr.insert(ValueRef::new(chapter_descriptor));
+        }
+        unsafe { create_chapter_result(arr.0 .0, self.has_more) }
     }
 }
 
@@ -415,33 +467,9 @@ impl Chapter {
     }
 }
 
-impl Page {
+impl ChapterParagraph {
     #[inline]
     pub fn create(self) -> i32 {
-        unsafe {
-            create_page(
-                self.index,
-                self.url.as_ptr(),
-                self.url.len(),
-                self.base64.as_ptr(),
-                self.base64.len(),
-                self.text.as_ptr(),
-                self.text.len(),
-            )
-        }
-    }
-}
-
-impl DeepLink {
-    pub fn create(self) -> i32 {
-        let manga = match self.manga {
-            Some(manga) => manga.create(),
-            None => -1,
-        };
-        let chapter = match self.chapter {
-            Some(chapter) => chapter.create(),
-            None => -1,
-        };
-        unsafe { create_deeplink(manga, chapter) }
+        unsafe { create_chapter_content(self.index, self.paragraph.as_ptr(), self.paragraph.len()) }
     }
 }

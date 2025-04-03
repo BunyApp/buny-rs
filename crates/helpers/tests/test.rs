@@ -1,5 +1,5 @@
-use aidoku_helpers::substring::Substring;
-use aidoku_helpers::uri::QueryParameters;
+use buny_helpers::substring::Substring;
+use buny_helpers::uri::QueryParameters;
 
 #[test]
 fn substring_before() {

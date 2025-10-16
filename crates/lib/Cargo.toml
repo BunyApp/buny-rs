@@ -1,6 +1,13 @@
 [package]
 name = "buny"
+<<<<<<< Updated upstream
 version = "0.1.0"
+=======
+version = "0.3.0"
+description = "Aidoku source API wrapper"
+repository = "https://github.com/Aidoku/buny-rs"
+authors = ["skitty"]
+>>>>>>> Stashed changes
 edition = "2021"
 publish = true
 

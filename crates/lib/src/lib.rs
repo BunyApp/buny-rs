@@ -91,7 +91,19 @@ pub mod std {
     pub use alloc::vec::Vec;
     pub use buny_imports::*;
 
+<<<<<<< Updated upstream
     pub use alloc::fmt::format;
+=======
+	let message = prelude::format!("{}", info);
+	unsafe {
+		// print the error message to buny logs
+		print(message.as_ptr(), message.len());
+		// tell buny we're aborting so that the unreachable instruction is not executed
+		abort();
+	};
+
+	core::arch::wasm32::unreachable()
+>>>>>>> Stashed changes
 }
 
 /// The Aidoku prelude, which includes [format!](buny_macros::format),

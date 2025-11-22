@@ -60,6 +60,7 @@ pub fn utc_offset(_env: FunctionEnvMut<WasmEnv>) -> i64 {
 	Local::now().offset().utc_minus_local() as i64
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn parse_date(
 	env: FunctionEnvMut<WasmEnv>,
 	date_str: Ptr,

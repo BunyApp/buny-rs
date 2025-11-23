@@ -3,7 +3,7 @@ name = "buny-test-runner"
 version = "0.1.0"
 description = "Test runner for Buny sources"
 repository = "https://github.com/BunyApp/buny-rs"
-authors = ["skitty"]
+authors = ["skitty", "pandeynmn"]
 edition = "2021"
 publish = false
 

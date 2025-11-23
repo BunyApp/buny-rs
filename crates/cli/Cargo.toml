@@ -3,7 +3,7 @@ name = "buny-cli"
 version = "0.1.0"
 description = "Command-line utility for Buny source development"
 repository = "https://github.com/BunyApp/buny-rs"
-authors = ["skitty"]
+authors = ["skitty", "pandeynmn"]
 edition = "2021"
 publish = false
 

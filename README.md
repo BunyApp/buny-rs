@@ -18,4 +18,4 @@ cargo install --git https://github.com/BunyApp/buny-rs buny-cli
 
 Then, create a new source project by running `buny init`.
 
-This repository is built on top of aidoku-rs.
+This repository is built on top of aidoku-rs

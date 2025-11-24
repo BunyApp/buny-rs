@@ -1,0 +1,9 @@
+(function() {
+    var implementors = Object.fromEntries([["buny",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.91.1/core/ops/drop/trait.Drop.html\" title=\"trait core::ops::drop::Drop\">Drop</a> for <a class=\"struct\" href=\"buny/imports/html/struct.Element.html\" title=\"struct buny::imports::html::Element\">Element</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.91.1/core/ops/drop/trait.Drop.html\" title=\"trait core::ops::drop::Drop\">Drop</a> for <a class=\"struct\" href=\"buny/imports/html/struct.ElementList.html\" title=\"struct buny::imports::html::ElementList\">ElementList</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.91.1/core/ops/drop/trait.Drop.html\" title=\"trait core::ops::drop::Drop\">Drop</a> for <a class=\"struct\" href=\"buny/imports/js/struct.JsContext.html\" title=\"struct buny::imports::js::JsContext\">JsContext</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.91.1/core/ops/drop/trait.Drop.html\" title=\"trait core::ops::drop::Drop\">Drop</a> for <a class=\"struct\" href=\"buny/imports/js/struct.WebView.html\" title=\"struct buny::imports::js::WebView\">WebView</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.91.1/core/ops/drop/trait.Drop.html\" title=\"trait core::ops::drop::Drop\">Drop</a> for <a class=\"struct\" href=\"buny/imports/net/struct.Request.html\" title=\"struct buny::imports::net::Request\">Request</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.91.1/core/ops/drop/trait.Drop.html\" title=\"trait core::ops::drop::Drop\">Drop</a> for <a class=\"struct\" href=\"buny/imports/net/struct.Response.html\" title=\"struct buny::imports::net::Response\">Response</a>"]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":57,"fragment_lengths":[1675]}

@@ -43,21 +43,6 @@ pub enum ContentRating {
 	NSFW,
 }
 
-/// The proper reading viewer for a novel.
-///
-/// This is used for automatic selection of the reader view in Buny.
-/// `RightToLeft` is used for novel, `LeftToRight` is for western comics,
-/// and `Webtoon` is used for manhwa and manhua.
-#[derive(Default, PartialEq, Eq, Clone, Copy, Debug, Serialize, Deserialize)]
-pub enum Viewer {
-	#[default]
-	Unknown = 0,
-	LeftToRight,
-	RightToLeft,
-	Vertical,
-	Webtoon,
-}
-
 /// The preferred update strategy for a novel.
 ///
 /// Titles marked as `Always` will be included in library refreshes by default,
@@ -70,7 +55,7 @@ pub enum UpdateStrategy {
 	Never,
 }
 
-/// A novel, comic, webtoon, or other type of content for Buny to read.
+/// A web novel object.
 #[derive(Default, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Novel {
 	/// Unique identifier for the novel.
@@ -93,8 +78,6 @@ pub struct Novel {
 	pub status: NovelStatus,
 	/// Content rating of the novel.
 	pub content_rating: ContentRating,
-	// /// Preferred viewer type of the novel.
-	// pub viewer: Viewer,
 	/// Ideal update strategy for the novel.
 	pub update_strategy: UpdateStrategy,
 	/// Optional date for when the novel should next be updated.
@@ -176,11 +159,9 @@ pub struct Chapter {
 	pub locked: bool,
 }
 
-/// The an element of content of the novel chapter page.
+/// An element of the page content that can be a paragraph, quote block or a table.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum ContentBlock {
-	// /// Optional open a url in browser action.
-	// Url(String, Option<ContentURLContext>),
 	/// Block/Banner quoted text.
 	BlockQuote(String),
 	/// Markdown text content.
@@ -192,16 +173,16 @@ pub enum ContentBlock {
 }
 
 impl ContentBlock {
-	/// Create a new `PageContent` with a url.
+	/// Create a new `PageContent` divider.
 	pub fn divider() -> Self {
 		Self::Divider
 	}
-	/// Create a new `PageContent` with a markdown text string.
+	/// Create a new `PageContent` with a block quoted text.
 	pub fn block_quote<T: Into<String>>(text: T) -> Self {
 		Self::BlockQuote(text.into())
 	}
 
-	/// Create a new `PageContent` with a markdown text string and optional style.
+	/// Create a new `PageContent` with a markdown text string and optional font size.
 	pub fn paragraph<T: Into<String>>(text: T, font_size: Option<String>) -> Self {
 		Self::Paragraph(text.into(), font_size)
 	}
@@ -213,6 +194,7 @@ impl ContentBlock {
 }
 
 impl Default for ContentBlock {
+    /// Create a default `ContentBlock` which is an empty paragraph.
 	fn default() -> Self {
 		ContentBlock::Paragraph(String::default(), None)
 	}
@@ -226,7 +208,7 @@ pub enum ListingKind {
 	List,
 }
 
-/// A listing of novel.
+/// A listing of the source containing novels.
 #[derive(Default, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Listing {
 	/// Unique identifier for the listing.

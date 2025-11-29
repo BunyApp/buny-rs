@@ -1,9 +1,9 @@
 #![no_std]
 use buny::{
-	BunyError, Chapter, DeepLinkHandler, DeepLinkResult, FilterValue, Home, HomeLayout, Listing,
-	ListingProvider, Novel, NovelPageResult, Page, Result, Source,
 	alloc::{String, Vec},
 	prelude::*,
+	BunyError, Chapter, ContentBlock, DeepLinkHandler, DeepLinkResult, FilterValue, Home,
+	HomeLayout, Listing, ListingProvider, Novel, NovelPageResult, Result, Source,
 };
 
 struct {{SOURCE_NAME}};
@@ -31,7 +31,11 @@ impl Source for {{SOURCE_NAME}} {
 		Err(BunyError::Unimplemented)
 	}
 
-	fn get_page_list(&self, _novel: Novel, _chapter: Chapter) -> Result<Vec<Page>> {
+	fn get_chapter_content_list(
+		&self,
+		_novel: Novel,
+		_chapter: Chapter,
+	) -> Result<Vec<ContentBlock>> {
 		Err(BunyError::Unimplemented)
 	}
 }

@@ -84,8 +84,8 @@ pub struct Novel {
 	pub next_update_time: Option<i64>,
 	/// List of chapters.
 	pub chapters: Option<Vec<Chapter>>,
-    /// Has more chapters.
-    pub has_more_chapters: Option<bool>,
+	/// Has more chapters.
+	pub has_more_chapters: Option<bool>,
 }
 
 impl Novel {
@@ -120,7 +120,7 @@ impl Novel {
 		}
 		if let Some(chapters) = novel.chapters {
 			self.chapters = Some(chapters);
-            self.has_more_chapters = novel.has_more_chapters;
+			self.has_more_chapters = novel.has_more_chapters;
 		}
 	}
 }
@@ -168,8 +168,8 @@ pub enum ContentBlock {
 	Paragraph(String, Option<String>),
 	/// HTML Table content.
 	Table(Vec<Vec<String>>),
-    /// Section break or divider.
-    Divider,
+	/// Section break or divider.
+	Divider,
 }
 
 impl ContentBlock {
@@ -194,7 +194,7 @@ impl ContentBlock {
 }
 
 impl Default for ContentBlock {
-    /// Create a default `ContentBlock` which is an empty paragraph.
+	/// Create a default `ContentBlock` which is an empty paragraph.
 	fn default() -> Self {
 		ContentBlock::Paragraph(String::default(), None)
 	}

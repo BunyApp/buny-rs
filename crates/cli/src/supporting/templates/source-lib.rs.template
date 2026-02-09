@@ -27,6 +27,7 @@ impl Source for {{SOURCE_NAME}} {
 		_novel: Novel,
 		_needs_details: bool,
 		_needs_chapters: bool,
+		_page: i32,
 	) -> Result<Novel> {
 		Err(BunyError::Unimplemented)
 	}

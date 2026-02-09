@@ -1,4 +1,4 @@
-use super::{ FilterValue, Listing, Novel};
+use super::{FilterValue, Listing, Novel};
 use serde::{Deserialize, Serialize};
 
 extern crate alloc;
@@ -45,33 +45,33 @@ impl Default for HomeComponent {
 /// The value of a component for a home layout.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum HomeComponentValue {
-    /// Home component that displays a scrolling set of images with links.
+	/// Home component that displays a scrolling set of images with links.
 	ImageScroller {
 		links: Vec<Link>,
 		auto_scroll_interval: Option<f32>,
 		width: Option<i32>,
 		height: Option<i32>,
 	},
-    /// Home component that displays detailed novel entries in a horizontal scrollable row.
+	/// Home component that displays detailed novel entries in a horizontal scrollable row.
 	Details {
 		entries: Vec<Novel>,
 		auto_scroll_interval: Option<f32>,
 		listing: Option<Listing>,
 	},
-    /// Home component that displays novel entries in a scrollable row in form of tiles.
+	/// Home component that displays novel entries in a scrollable row in form of tiles.
 	Scroller {
 		entries: Vec<Novel>,
 		auto_scroll_interval: Option<f32>,
 		listing: Option<Listing>,
 		size: i32,
 	},
-    /// Home component that displays novel entries in a stacked list of 3 objects.
+	/// Home component that displays novel entries in a stacked list of 3 objects.
 	Stack {
 		entries: Vec<Novel>,
 		auto_scroll_interval: Option<f32>,
 		listing: Option<Listing>,
 	},
-    /// Vertical grid of novel tiles.
+	/// Vertical grid of novel tiles.
 	Vertical {
 		entries: Vec<Novel>,
 		auto_scroll_interval: Option<f32>,
@@ -96,7 +96,7 @@ impl HomeComponentValue {
 		}
 	}
 
-    /// Creates an empty details component.
+	/// Creates an empty details component.
 	pub fn empty_details() -> Self {
 		Self::Details {
 			entries: Vec::new(),
@@ -217,14 +217,14 @@ pub enum LinkValue {
 }
 
 impl Default for LinkValue {
-    /// Default link value is an empty URL.
+	/// Default link value is an empty URL.
 	fn default() -> Self {
 		Self::Url(String::new())
 	}
 }
 
 impl From<Novel> for Link {
-    /// Creates a link from a novel.
+	/// Creates a link from a novel.
 	fn from(value: Novel) -> Self {
 		Link {
 			title: value.title.clone(),

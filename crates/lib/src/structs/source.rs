@@ -23,13 +23,13 @@ pub trait Source {
 	) -> Result<NovelPageResult>;
 
 	/// Updates a given novel with new details and chapters, as requested.
-    /// Additiohally, the `page` parameter indicates which page of chapters to fetch if pagination is supported.
+	/// Additiohally, the `page` parameter indicates which page of chapters to fetch if pagination is supported.
 	fn get_novel_update(
 		&self,
 		novel: Novel,
 		needs_details: bool,
 		needs_chapters: bool,
-        page: i32,
+		page: i32,
 	) -> Result<Novel>;
 
 	/// Returns the content array for a given novel chapter.

@@ -43,6 +43,7 @@ extern "C" {
 	fn read_data(rid: Rid, buffer: *mut u8, size: usize) -> FFIResult;
 	fn get_header(rid: Rid, key: *const u8, key_len: usize) -> FFIResult;
 	fn get_status_code(rid: Rid) -> FFIResult;
+	fn get_url(rid: Rid) -> FFIResult;
 	fn html(rid: Rid) -> FFIResult;
 
 	#[link_name = "set_rate_limit"]
@@ -322,6 +323,15 @@ impl Response {
 	#[inline]
 	pub fn status_code(&self) -> i32 {
 		unsafe { get_status_code(self.rid) }
+	}
+
+	/// Get the final URL for the response.
+	pub fn get_url(&self) -> Option<String> {
+		let rid = unsafe { get_url(self.rid) };
+		if rid < 0 {
+			return None;
+		}
+		read_string_and_destroy(rid)
 	}
 
 	/// Get a response HTTP header.

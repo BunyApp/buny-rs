@@ -84,11 +84,13 @@ pub fn generate_imports(store: &mut Store, env: &FunctionEnv<WasmEnv>) -> Import
 			"set_url" => Function::new_typed_with_env(store, env, net::set_url),
 			"set_header" => Function::new_typed_with_env(store, env, net::set_header),
 			"set_body" => Function::new_typed_with_env(store, env, net::set_body),
+			"set_timeout" => Function::new_typed_with_env(store, env, net::set_timeout),
 
 			"data_len" => Function::new_typed_with_env(store, env, net::data_len),
 			"read_data" => Function::new_typed_with_env(store, env, net::read_data),
 			"get_image" => Function::new_typed_with_env(store, env, net::get_image),
 			"get_status_code" => Function::new_typed_with_env(store, env, net::get_status_code),
+			"get_url" => Function::new_typed_with_env(store, env, net::get_url),
 			"get_header" => Function::new_typed_with_env(store, env, net::get_header),
 			"html" => Function::new_typed_with_env(store, env, net::html),
 

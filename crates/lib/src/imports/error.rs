@@ -1,12 +1,14 @@
 //! Error handling for Buny source library functions.
 use super::{html::HtmlError, js::JsError, net::RequestError};
+#[cfg(feature = "json")]
+use crate::alloc::rc::Rc;
 use crate::alloc::{string::ToString, String};
 use core::{fmt::Display, str::Utf8Error};
 
 pub type Result<T> = core::result::Result<T, BunyError>;
 
 /// An error passed back to the source runner.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BunyError {
 	/// This feature is unimplemented.
 	Unimplemented,
@@ -22,7 +24,7 @@ pub enum BunyError {
 	Utf8Error(Utf8Error),
 	#[cfg(feature = "json")]
 	/// JSON parsing error.
-	JsonParseError(serde_json::Error),
+	JsonParseError(Rc<serde_json::Error>),
 	/// Deserialization error.
 	DeserializeError,
 }
@@ -61,6 +63,6 @@ impl From<Utf8Error> for BunyError {
 #[cfg(feature = "json")]
 impl From<serde_json::Error> for BunyError {
 	fn from(error: serde_json::Error) -> BunyError {
-		BunyError::JsonParseError(error)
+		BunyError::JsonParseError(Rc::new(error))
 	}
 }

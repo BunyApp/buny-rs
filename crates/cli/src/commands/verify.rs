@@ -4,6 +4,7 @@ use colored::Colorize;
 use image::GenericImageView;
 use serde_json::Value;
 use std::io::prelude::*;
+use wasmparser::{Parser, Payload};
 
 // include json schemas as static strings
 const SOURCE_JSON_SCHEMA: &str = include_str!("../supporting/schema/source.schema.json");
@@ -43,11 +44,9 @@ pub fn run(files: Vec<std::path::PathBuf>) -> anyhow::Result<()> {
 		};
 
 		// main.wasm
-		let has_main_wasm = if archive.by_name("Payload/main.wasm").is_ok() {
+		let has_main_wasm = if let Ok(file) = archive.by_name("Payload/main.wasm") {
 			println!("  * main.wasm");
-			// todo: do some verification here
-			println!("    * note: the executable itself is not verified");
-			true
+			validate_wasm(file)
 		} else {
 			println!("  {}", "* missing main.wasm".red());
 			false
@@ -186,4 +185,83 @@ fn validate_json(
 	} else {
 		true
 	}
+}
+
+// the minimum exports required for a source to work
+#[derive(Default)]
+struct RequiredExports {
+	start: bool,
+	free_result: bool,
+	get_search_novel_list: bool,
+	get_novel_update: bool,
+	get_chapter_content_list: bool,
+}
+
+impl RequiredExports {
+	fn new() -> Self {
+		Self::default()
+	}
+
+	fn all_satisfied(&self) -> bool {
+		self.start
+			&& self.free_result
+			&& self.get_search_novel_list
+			&& self.get_novel_update
+			&& self.get_chapter_content_list
+	}
+
+	fn mark(&mut self, name: &str) {
+		match name {
+			"start" => self.start = true,
+			"free_result" => self.free_result = true,
+			"get_search_novel_list" => self.get_search_novel_list = true,
+			"get_novel_update" => self.get_novel_update = true,
+			"get_chapter_content_list" => self.get_chapter_content_list = true,
+			_ => {}
+		}
+	}
+}
+
+fn validate_wasm(mut wasm_file: zip::read::ZipFile<'_, std::io::BufReader<std::fs::File>>) -> bool {
+	let mut wasm_bytes = Vec::new();
+	if wasm_file.read_to_end(&mut wasm_bytes).is_err() {
+		println!("    {}", "* failed to read file".red());
+		return false;
+	}
+
+	let mut exports = RequiredExports::new();
+	let mut parsed = true;
+
+	for payload in Parser::new(0).parse_all(&wasm_bytes) {
+		let Ok(payload) = payload else {
+			parsed = false;
+			break;
+		};
+		if let Payload::ExportSection(s) = payload {
+			for export in s {
+				let Ok(export) = export else {
+					parsed = false;
+					break;
+				};
+				exports.mark(export.name);
+			}
+		}
+	}
+
+	println!(
+		"    * is valid wasm... {}",
+		if parsed { "yes".green() } else { "no".red() }
+	);
+
+	let exports_valid = exports.all_satisfied();
+	println!(
+		"    * minimum functions exported... {}",
+		if exports_valid {
+			"yes".green()
+		} else {
+			"no".red()
+		}
+	);
+
+	parsed && exports_valid
 }

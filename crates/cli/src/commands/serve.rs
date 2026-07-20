@@ -7,11 +7,42 @@ use std::{net::SocketAddr, time::Duration};
 use tower_http::{services::ServeDir, trace::TraceLayer};
 use tracing::Level;
 
+const MAX_SEARCH_DEPTH: u32 = 4;
+
+fn find_bunpacks(
+	dir: &std::path::Path,
+	depth: u32,
+	out: &mut Vec<std::path::PathBuf>,
+) -> std::io::Result<()> {
+	if depth > MAX_SEARCH_DEPTH {
+		return Ok(());
+	}
+	for entry in std::fs::read_dir(dir)? {
+		let path = entry?.path();
+		if path.is_dir() {
+			find_bunpacks(&path, depth + 1, out)?;
+		} else if path.extension().is_some_and(|e| e == "bunpack") {
+			out.push(path);
+		}
+	}
+	Ok(())
+}
+
 pub async fn run(
-	files: Vec<std::path::PathBuf>,
+	path: Option<std::path::PathBuf>,
 	output_path: &std::path::PathBuf,
 	port: u16,
 ) -> anyhow::Result<()> {
+	let path = path.unwrap_or(std::env::current_dir()?);
+
+	let files = if path.is_dir() {
+		let mut found = Vec::new();
+		find_bunpacks(&path, 0, &mut found)?;
+		found
+	} else {
+		vec![path]
+	};
+
 	super::build::run(files, output_path, Some("Development Source List".into()))?;
 
 	// enable logging

@@ -13,7 +13,7 @@ Commands:
   package  Build and package a source
   build    Build a source list
   init     Initialize a new source
-  serve    Serve a source on the local network
+  serve    Serve a source on the local network. Takes a path or a file. If empty, it will use the current directory.
   verify   Verify a source is ready to be published
   help     Print this message or the help of the given subcommand(s)
 

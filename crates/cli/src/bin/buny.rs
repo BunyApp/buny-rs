@@ -4,6 +4,7 @@ use buny_cli::models::SourceContentRating;
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
+#[command(arg_required_else_help = true)]
 struct Cli {
 	#[command(subcommand)]
 	command: Command,
@@ -59,10 +60,11 @@ enum Command {
 		#[arg(short, long, default_value = "9000")]
 		port: u16,
 	},
-	/// Build a source list and serve it on the local network
+	/// Build a source list and serve it on the local network. Takes a path or a file. If empty, it will use the current directory.
 	Serve {
-		/// Paths to source packages
-		files: Vec<std::path::PathBuf>,
+		/// A .bunpack file, or a directory to search recursively (up to 4 levels
+		/// deep) for .bunpack files. Defaults to the current directory.
+		path: Option<std::path::PathBuf>,
 		/// Output folder path
 		#[arg(short, long, default_value = std::path::PathBuf::from("public").into_os_string())]
 		output: std::path::PathBuf,
@@ -70,7 +72,7 @@ enum Command {
 		#[arg(short, long, default_value = "8080")]
 		port: u16,
 	},
-	/// Verify a source is ready to be published
+	/// Verify a source is ready to be published.
 	Verify {
 		/// Paths to source packages
 		files: Vec<std::path::PathBuf>,
@@ -107,10 +109,10 @@ async fn main() -> Result<()> {
 		)?,
 		Command::Logcat { port } => commands::logcat::run(port).await?,
 		Command::Serve {
-			files,
+			path,
 			output,
 			port,
-		} => commands::serve::run(files, &output, port).await?,
+		} => commands::serve::run(path, &output, port).await?,
 		Command::Verify { files } => commands::verify::run(files)?,
 	}
 

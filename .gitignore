@@ -2,3 +2,4 @@ target/
 *.wat
 .DS_Store
 examples/*/*.bunpak
+/crates/cli/public

@@ -72,9 +72,16 @@ pub enum HomeComponentValue {
 		listing: Option<Listing>,
 	},
 	/// Vertical grid of novel tiles.
+	///
+	/// The app always draws it at the bottom of the home page and pages through
+	/// `listing` itself, so `entries` can be left empty.
+	///
+	/// Its field layout must match BunyRunner's decoder (`Models/Home.swift`), which
+	/// reads `entries` then `listing`. There is no `auto_scroll_interval` here: an
+	/// extra field would be read as the `listing` option tag and the grid would
+	/// always get no listing.
 	Vertical {
 		entries: Vec<Novel>,
-		auto_scroll_interval: Option<f32>,
 		listing: Option<Listing>,
 	},
 	/// A collection of links to filtered listings.
@@ -158,7 +165,6 @@ impl HomeComponentValue {
 	pub fn empty_vertical() -> Self {
 		Self::Vertical {
 			entries: Vec::new(),
-			auto_scroll_interval: None,
 			listing: None,
 		}
 	}
@@ -236,5 +242,27 @@ impl From<Novel> for Link {
 			image_url: value.cover.clone(),
 			value: Some(LinkValue::Novel(value)),
 		}
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	// BunyRunner's `HomeComponent.Value` decoder (`Models/Home.swift`) hand-reads each
+	// variant field by field; any drift here silently misdecodes on the host.
+	#[test]
+	fn vertical_matches_host_layout() {
+		let value = HomeComponentValue::Vertical {
+			entries: Vec::new(),
+			listing: Some(Listing {
+				id: "a".into(),
+				name: "b".into(),
+				..Default::default()
+			}),
+		};
+		let bytes = postcard::to_allocvec(&value).unwrap();
+		// Variant 4, zero entries, `Some` tag, then the listing's id "a".
+		assert_eq!(&bytes[..5], &[4, 0, 1, 1, b'a']);
 	}
 }

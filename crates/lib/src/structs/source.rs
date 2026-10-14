@@ -1,6 +1,6 @@
 use super::{
 	Chapter, ContentBlock, Filter, FilterValue, HashMap, HomeLayout, Listing, Novel,
-	NovelPageResult, Setting,
+	NovelPageResult, ReviewPageResult, Setting,
 };
 use crate::alloc::{String, Vec};
 use serde::{ser::SerializeStruct, Deserialize, Serialize};
@@ -66,6 +66,12 @@ pub trait DynamicSettings: Source {
 /// A source that provides multiple cover images.
 pub trait AlternateCoverProvider: Source {
 	fn get_alternate_covers(&self, novel: Novel) -> Result<Vec<String>>;
+}
+
+/// A source that provides reviews of a novel.
+pub trait ReviewProvider: Source {
+	/// Returns one page of reviews; `page` starts at 1.
+	fn get_novel_reviews(&self, novel: Novel, page: i32) -> Result<ReviewPageResult>;
 }
 
 /// A source that provides a programmatic base url.

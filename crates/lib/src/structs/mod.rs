@@ -134,6 +134,32 @@ pub struct NovelPageResult {
 	pub has_next_page: bool,
 }
 
+/// A review of a novel.
+#[derive(Default, Clone, Debug, PartialEq, Serialize)]
+pub struct Review {
+	/// Name of the reviewer.
+	pub author: String,
+	/// Link to the reviewer's avatar image.
+	pub avatar: Option<String>,
+	/// Title of the review.
+	pub title: Option<String>,
+	/// Plain text body of the review, with paragraphs separated by `\n\n`.
+	pub content: Option<String>,
+	/// Rating normalised to 0.0-1.0 (multiply by 5 for stars).
+	pub rating: Option<f32>,
+	/// Date the review was posted, in seconds since the Unix epoch.
+	pub date: Option<i64>,
+}
+
+/// A page of novel reviews.
+#[derive(Default, Clone, Debug, PartialEq, Serialize)]
+pub struct ReviewPageResult {
+	/// List of reviews.
+	pub entries: Vec<Review>,
+	/// Whether the next page is available or not.
+	pub has_next_page: bool,
+}
+
 /// A chapter of a novel.
 #[derive(Default, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Chapter {
@@ -217,4 +243,29 @@ pub struct Listing {
 	pub name: String,
 	/// Type of listing.
 	pub kind: ListingKind,
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::alloc::vec;
+
+	// BunyRunner's `ReviewPageResult` decoding (`ModelCodingTests`) pins these same bytes.
+	#[test]
+	fn review_page_result_matches_host_layout() {
+		let page = ReviewPageResult {
+			entries: vec![Review {
+				author: "a".into(),
+				rating: Some(1.0),
+				date: Some(1),
+				..Default::default()
+			}],
+			has_next_page: false,
+		};
+		let bytes = postcard::to_allocvec(&page).unwrap();
+		assert_eq!(
+			bytes,
+			[1, 1, b'a', 0, 0, 0, 1, 0x00, 0x00, 0x80, 0x3f, 1, 2, 0]
+		);
+	}
 }

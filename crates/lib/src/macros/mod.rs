@@ -313,6 +313,21 @@ macro_rules! register_source {
 		}
 	};
 
+	(@single ReviewProvider) => {
+		#[no_mangle]
+		#[export_name = "get_novel_reviews"]
+		pub unsafe extern "C" fn __wasm_get_novel_reviews(novel_descriptor: i32, page: i32) -> i32 {
+			let ::core::result::Result::Ok(novel) =
+				$crate::imports::std::read::<$crate::Novel>(novel_descriptor)
+			else {
+				return -1;
+			};
+			use $crate::ReviewProvider;
+			let result = __source().get_novel_reviews(novel, page);
+			__handle_result(result)
+		}
+	};
+
 	(@single BaseUrlProvider) => {
 		#[no_mangle]
 		#[export_name = "get_base_url"]
